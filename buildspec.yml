@@ -1,0 +1,8 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - mvn --version
+      - mvn package -Dnative -Dquarkus.native.container-build=true
+      - sam build -t sam.native.yaml
+      - sam deploy --config-file samconfig-native.toml --no-confirm-changeset --no-fail-on-empty-changeset

@@ -1,0 +1,51 @@
+  AWSTemplateFormatVersion: '2010-09-09'
+  Transform: AWS::Serverless-2016-10-31
+  Description: AWS Serverless Quarkus HTTP - quarkus-amazon-lambda-rest-deployment
+  Globals:
+    Api:
+      EndpointConfiguration: REGIONAL
+      BinaryMediaTypes:
+        - "*/*"
+
+  Resources:
+    PdfBucket:
+      Type: AWS::S3::Bucket
+    Pdfgenerator:
+      Type: AWS::Serverless::Function
+      Properties:
+        Handler: io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest
+        Runtime: java11
+        CodeUri: target/function.zip
+        MemorySize: 512
+        Policies:
+          - S3FullAccessPolicy:
+              BucketName: !Ref PdfBucket
+          - AWSLambdaBasicExecutionRole
+        Timeout: 15
+        Environment:
+          Variables:
+            PDF_BUCKET_NAME: !Ref PdfBucket
+        Events:
+          GetResource:
+            Type: Api
+            Properties:
+              Path: /{proxy+}
+              Method: any
+  Metadata:
+    AWS::ServerlessRepo::Application:
+      Name: textract-pdf
+      Description: This serverless components can extract text out of pdf files uploaded
+      Author: faskan
+      SpdxLicenseId: Apache-2.0
+      LicenseUrl: LICENSE.txt
+      ReadmeUrl: README.md
+      Labels: [ 'tests' ]
+      HomePageUrl: https://github.com/faskan/textractpdf
+      SemanticVersion: 0.0.1
+      SourceCodeUrl: https://github.com/faskan/textractpdf
+  Outputs:
+    PdfgeneratorApi:
+      Description: URL for application
+      Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
+      Export:
+        Name: PdfgeneratorApi
