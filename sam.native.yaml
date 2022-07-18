@@ -21,6 +21,7 @@
           - S3FullAccessPolicy:
               BucketName: !Ref PdfBucket
           - AWSLambdaBasicExecutionRole
+          - TextractPolicy: {}
         Timeout: 15
         Environment:
           Variables:

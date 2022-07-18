@@ -67,7 +67,7 @@ public class ExpenseAnalyserService {
             return result.expenseDocuments().stream()
                     .map(expenseDocument -> expenseDocument.summaryFields())
                     .flatMap(Collection::stream)
-                    .filter(expenseField -> expenseField.type().text().equalsIgnoreCase("INVOICINVOICE_RECEIPT_IDE_RECEIPT_DATE"))
+                    .filter(expenseField -> expenseField.type().text().equalsIgnoreCase("INVOICE_RECEIPT_ID"))
                     .filter(expenseField -> expenseField.type().confidence() > 80)
                     .max(Comparator.comparing(expenseField -> expenseField.type().confidence()))
                     .map(expenseField -> expenseField.valueDetection().text());
